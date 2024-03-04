@@ -1,0 +1,104 @@
+
+def findJudge(self, n: int, trust: List[List[int]]) -> int:
+        # stard a 1-D dp table with n+1 0's
+        dp = [0] * (n+1)
+        # for each trustee assign value of -1 to dp table loc, for each trusted add 1 to dp table loc
+        for t in trust:
+            dp[t[0]] = -1
+            dp[t[1]]+=1
+        # print(dp)
+        # most trusted number represented by dp table loc should add up to n-1
+        for i, el in enumerate(dp[1:],1):
+            if el == n-1:
+                return i
+        return -1
+
+def numSquares(self, n: int) -> int:
+        dp = [float('inf')] * (n + 1)
+        dp[0] = 0
+        for i in range(1, n + 1):
+            min_val = float('inf')
+            j = 1
+            while j * j <= i:
+                min_val = min(min_val, dp[i - j * j] + 1)
+                j += 1
+            dp[i] = min_val
+        return dp[n]
+
+
+   def rangeSumBST(self, root: Optional[TreeNode], low: int, high: int) -> int:
+        def dfs(node):
+            if not node:
+                return 0
+            
+            current_val = 0
+            if low <= node.val <= high:
+                current_val = node.val
+            
+            left_sum = dfs(node.left)
+            right_sum = dfs(node.right)
+            
+            return current_val + left_sum + right_sum
+        
+        return dfs(root)
+
+Backwards DP for falling sum
+    def minFallingPathSum(self, matrix: List[List[int]]) -> int:
+        if len(matrix) == 1:
+                    return matrix[0][0]
+        n = len(matrix)
+        dp = [[0] * n for _ in range(n)]
+        dp = matrix.copy() 
+        for i in range(n - 2, -1, -1):
+            for j in range(n):
+                min_path = dp[i + 1][j]
+                if j > 0:
+                    min_path = min(min_path, dp[i + 1][j - 1])
+                if j < n - 1:
+                    min_path = min(min_path, dp[i + 1][j + 1])
+                dp[i][j] += min_path
+
+        return min(dp[0])
+
+
+
+
+ def maxLength(self, arr: List[str]) -> int:
+        def dfs(i, seen):
+            if i >= len(arr):
+                return 0
+
+            notIncluded = dfs(i + 1, seen)
+
+            currSeen = set()
+            for c in arr[i]:
+                if c in seen or c in currSeen:
+                    return notIncluded
+                currSeen.add(c)
+
+            included = len(arr[i]) + dfs(i + 1, seen | set(arr[i]))
+
+            return max(notIncluded, included)
+        
+        return dfs(0, set())
+
+
+def pseudoPalindromicPaths (self, root: Optional[TreeNode]) -> int:
+        count = 0
+        stack = [(root, 0)]
+
+        while stack:
+            node, path = stack.pop()
+
+            if node:
+                path ^= 1 << node.val
+                print(path, node.val, 1 << node.val, path -1, path & (path - 1))
+
+                if not node.left and not node.right:
+                    if path & (path - 1) == 0:
+                        count += 1
+                else:
+                    stack.append((node.right, path))
+                    stack.append((node.left, path))
+
+        return count
